@@ -30,6 +30,8 @@
         .header p { color: var(--text-sub); font-size: 0.9rem; }
         
         .link-section { display: flex; flex-direction: column; gap: 16px; }
+        
+        /* 카드 구조 변경: 텍스트와 버튼을 가로로 배치 */
         .link-card { 
             background: var(--card-bg); 
             padding: 20px; 
@@ -39,15 +41,34 @@
             border: 1px solid #e9ecef;
             transition: all 0.2s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            display: block;
+            display: flex; /* 가로 배치 */
+            align-items: center;
+            justify-content: space-between;
         }
         .link-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); border-color: var(--accent); }
         
+        .link-content { flex: 1; } /* 텍스트가 왼쪽 공간을 다 차지하도록 함 */
         .title { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; color: var(--text-main); }
         .description { display: block; font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; }
         .date { display: inline-block; font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-top: 8px; }
 
-        .footer { margin-top: 50px; font-size: 0.8rem; color: #adb5bd; }
+        /* 주소 복사 버튼 스타일 */
+        .copy-btn {
+            background: #f1f3f5;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            margin-left: 15px;
+            min-width: 50px;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+        .copy-btn:hover { background: #e9ecef; color: var(--accent); }
+
+        .footer { margin-top: 50px; font-size: 0.8rem; color: #adb5bd; text-align: center; }
     </style>
 </head>
 <body>
@@ -56,33 +77,67 @@
         <div class="header">
             <h1>zine sue</h1>
             <p>직접 만들어 쓰는 즐거움과 기쁨을 공유하는 곳</p>
+            <p style="font-size: 0.8rem; color: var(--accent); margin-top: 10px; font-weight: 600;">📍 새로운 zine은 계속해서 업데이트됩니다.</p>
         </div>
 
         <div class="link-section">
             <a href="https://drive.google.com/file/d/1Rxn8VkW3B9XkcEfpDcKLYOQI-6ELwkw-/view?usp=sharing" class="link-card" 
                onclick="gtag('event', 'click_book_paradox');">
-                <span class="title">📘 AI와 로봇 시대의 세 가지 역설</span>
-                <span class="date">2026. 02. 28. 발행</span>
+                <div class="link-content">
+                    <span class="title">📘 AI와 로봇 시대의 세 가지 역설</span>
+                    <span class="description" style="color: var(--accent); font-weight: 600; margin-bottom: 4px;">📥 클릭 후 PDF로 다운로드 가능합니다.</span>
+                    <span class="date">2026. 02. 28. 발행</span>
+                </div>
+                <button class="copy-btn" onclick="copyLink(event, 'https://drive.google.com/file/d/1Rxn8VkW3B9XkcEfpDcKLYOQI-6ELwkw-/view?usp=sharing')">주소<br>복사</button>
             </a>
 
             <a href="https://geohunter-ceo.com/" class="link-card" 
                onclick="gtag('event', 'click_game_geohunter');">
-                <span class="title">🎮 Geo Hunter CEO</span>
-                <span class="description">삼각측량 원리를 활용한 탐색형 퍼즐. 최고의 탐사기업 CEO에 도전하세요.</span>
+                <div class="link-content">
+                    <span class="title">🎮 Geo Hunter CEO</span>
+                    <span class="description">삼각측량 원리를 활용한 탐색형 퍼즐. 최고의 탐사기업 CEO에 도전하세요.</span>
+                </div>
+                <button class="copy-btn" onclick="copyLink(event, 'https://geohunter-ceo.com/')">주소<br>복사</button>
             </a>
             
             <a href="https://www.instagram.com/zinesue_" class="link-card" 
                onclick="gtag('event', 'click_sns_insta');">
-                <span class="title">📱 Instagram</span>
-                <span class="description">zine sue의 최신 소식과 제작 비하인드를 확인하세요.</span>
+                <div class="link-content">
+                    <span class="title">📱 Instagram</span>
+                    <span class="description">zine sue의 최신 소식과 제작 비하인드를 확인하세요.</span>
+                </div>
+                <button class="copy-btn" onclick="copyLink(event, 'https://www.instagram.com/zinesue_')">주소<br>복사</button>
             </a>
-            
-            </div>
+        </div>
 
         <div class="footer">
             &copy; 2026 zine sue. All rights reserved.
         </div>
     </div>
+
+    <script>
+    function copyLink(event, url) {
+        event.preventDefault(); // 카드 자체의 링크 이동을 방지
+        event.stopPropagation(); // 부모 요소로 클릭 이벤트가 퍼지는 것을 방지
+
+        navigator.clipboard.writeText(url).then(() => {
+            // 클릭된 버튼을 찾아 텍스트 변경
+            const btn = event.target.closest('.copy-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = "복사<br>완료!";
+            btn.style.color = "#28a745"; // 성공 시 초록색으로 변경
+
+            // 2초 후 원래 텍스트로 복구
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.color = "";
+            }, 2000);
+        }).catch(err => {
+            alert('주소 복사에 실패했습니다. 직접 복사해 주세요.');
+        });
+    }
+    </script>
 
 </body>
 </html>
